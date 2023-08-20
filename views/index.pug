@@ -1,0 +1,57 @@
+doctype html
+head
+    meta(name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1')
+    title Filo universal script example
+    script(async="" src='https://storage.googleapis.com/filo-website-asset/filo-sdk.js')
+    script.
+        function onButtonClick() {
+            let uid = document.getElementById("uid").value;
+            let question = document.getElementById("question")?.value;
+
+            if ((uid || "") === "") {
+                alert('User id is not provided. Please provide user ID');
+                return;
+            }
+
+            const partnerId = 'test-partner'; // your filo partner id
+            const url = 'https://test-partner.student.askfilo.com' // your filo app url.
+
+            const savedToken = sessionStorage.getItem('filo-token') || '';
+            const savedTokenTTL = parseInt(sessionStorage.getItem('expiry') || "0")
+            const savedUid = sessionStorage.getItem('user-id')
+
+            if (uid === savedUid && savedToken !== '' && savedTokenTTL > (Date.now() / 1000)) {
+                console.log("Saved token already valid. Using it.")
+                window.openModal(savedToken, question || "", partnerId, url)
+                return;
+            }
+
+            console.log("Saved token not valid, fetching new one.");
+            fetch('/users/filo/token', {headers: {'user-id': uid}}).then(async res => {
+                const {token, expiry} = await res.json();
+                sessionStorage.setItem('filo-token', token);
+                sessionStorage.setItem('expiry', expiry);
+                sessionStorage.setItem('user-id', uid);
+                window.openModal(token, question || "", partnerId, url);
+            }, err => {
+                console.error('Unable to get filo token for user:', err);
+            })
+        }
+
+body
+    div
+        label(for='question') Question
+        input#question(type='text')
+        br
+        br
+        label(for='uid') User Id
+        input#uid(type='text')
+        br
+        br
+        button(onclick='onButtonClick()') Ask question
+        br
+        br
+        #error
+        br
+        br
+        br
