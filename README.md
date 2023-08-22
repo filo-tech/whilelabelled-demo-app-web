@@ -4,7 +4,7 @@ This guide will walk you through the process of running your sample white-labell
 
 ## Prerequisites
 
-1. **Node.js and npm**: Make sure you have Node.js and npm (Node Package Manager) installed on your system. You can download them from the [official Node.js website](https://nodejs.org/).
+1. **Node.js and yarn**: Make sure you have Node.js and yarn (Node Package Manager) installed on your system. You can download them from the [official Node.js website](https://nodejs.org/).
 
 2. **Git**: You'll need Git for version control and cloning the repository. Download and install Git from the [Git website](https://git-scm.com/).
 
@@ -23,7 +23,7 @@ This guide will walk you through the process of running your sample white-labell
 
 1. **Install Dependencies**: Run the following command to install the project dependencies defined in package.json:
     ```bash
-   npm install
+   yarn install
     ```
 2. **Configuration**: Create a `.env.development` file in the root folder of the project and paste the following data:
     ```env
@@ -37,6 +37,6 @@ This guide will walk you through the process of running your sample white-labell
 
 1. **Start the server**
     ```bash
-    npm start
+    yarn start
     ```
 2. **Access the Application**: Open your web browser and navigate to `http://localhost:3000`
