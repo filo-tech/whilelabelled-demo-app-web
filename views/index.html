@@ -7,7 +7,7 @@
   <title>Filo white-labelled SDK example</title>
   <script
     async=""
-    src="https://storage.googleapis.com/filo-website-asset/sdk-plugin-script.min.js"
+    src="https://storage.googleapis.com/filo-website-asset/filo-sdk-plugin-script.min.js"
   ></script>
   <script>
     function onButtonClick() {
@@ -32,7 +32,7 @@
         savedTokenTTL > Date.now() / 1000
       ) {
         console.log("Saved token already valid. Using it.");
-        window.openFiloSdk(savedToken, question || "", partnerId, url);
+        window.openFiloSdk(partnerId, savedToken, url, question || "");
         return;
       }
 
@@ -50,7 +50,7 @@
           sessionStorage.setItem("filo-token", token);
           sessionStorage.setItem("expiry", expiry);
           sessionStorage.setItem("user-id", uid);
-          window.openFiloSdk(token, question || "", partnerId, url);
+          window.openFiloSdk(partnerId, token, url, question || "");
         },
         (err) => {
           console.error("Unable to get filo token for user:", err);
