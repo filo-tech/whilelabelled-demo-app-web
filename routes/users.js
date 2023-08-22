@@ -7,7 +7,7 @@ const {response} = require("express");
 
 
 // TODO - Ensure this request is authenticated to avoid misuse of API
-router.get('/filo/token', async function (req, res) {
+router.get('/filo/token', async function (req, res, next) {
   // Fetch user identifier from headers/cookies/or body
   const userId = req.header('user-id')
 
@@ -27,8 +27,13 @@ router.get('/filo/token', async function (req, res) {
 
   // ========================================
   // Optionally configure user data with filo
-  const filoUserData = await provisionUser(token, 'Rohit Kumar', 10);
-  console.log("Filo user data", {uid: filoUserData.userId})
+  try {
+    const filoUserData = await provisionUser(token, 'Rohit Kumar', 10);
+    console.log("Filo user data", {uid: filoUserData.userId});
+  } catch (e) {
+    next(e);
+    return;
+  }
   // todo - save this user id to your database
   // ----------- end user provisioning ----------
 
@@ -55,7 +60,7 @@ const provisionUser = async (token, name, gradeId, boardId = null, gender = null
     headers: {'Content-Type': 'application/json'}
   });
   if (userResp.status !== 200) {
-    console.error('unable to provision user with filo', {err: await userResp.text(), status: userResp.status});
+    console.error('unable to provision user with filo', {status: userResp.status});
     throw new Error('unable to provision user with filo')
   }
 

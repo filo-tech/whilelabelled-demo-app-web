@@ -27,6 +27,11 @@
 
         console.log("Saved token not valid, fetching new one.");
         fetch('/users/filo/token', {headers: {'user-id': uid}}).then(async res => {
+            if (res.status !== 200) {
+                console.error('Unable to get token from server', {code: res.status})
+                alert('Unable to get token from server');
+                return;
+            }
             const {token, expiry} = await res.json();
             sessionStorage.setItem('filo-token', token);
             sessionStorage.setItem('expiry', expiry);
@@ -34,6 +39,7 @@
             window.openModal(token, question || "", partnerId, url);
         }, err => {
             console.error('Unable to get filo token for user:', err);
+            alert('Unable to get token from server');
         })
     }
     </script>
