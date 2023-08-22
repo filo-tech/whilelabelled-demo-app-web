@@ -32,6 +32,7 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
+  res.status(err.status || 500);
   res.send({message: err.message, status: err.status || 500, stack: err.stack});
 });
 
