@@ -27,13 +27,13 @@ router.get("/filo/token", async function (req, res, next) {
   // ========================================
   // Optionally configure user data with filo
   try {
-    const filoUserData = await provisionUser(token, 'Rohit Kumar', 10);
-    console.log("Filo user data", {uid: filoUserData.userId});
+    const filoUserData = await provisionUser(token, "Rohit Kumar", 10);
+    console.log("Filo user data", { uid: filoUserData.userId });
+    // todo - save this user id to your database
   } catch (e) {
     next(e);
     return;
   }
-  // todo - save this user id to your database
   // ----------- end user provisioning ----------
 
   // ============================================
@@ -48,7 +48,7 @@ router.get("/filo/token", async function (req, res, next) {
 
 /**
  * @param {*} token
- * @param {number} name - required
+ * @param {string} name - required
  * @param {number} gradeId - required
  * @param {number|null} boardId - optional
  * @param {string|null} gender - male/female - optional
@@ -77,7 +77,6 @@ const provisionUser = async (
   });
   if (userResp.status !== 200) {
     console.error("unable to provision user with filo", {
-
       status: userResp.status,
     });
     throw new Error("unable to provision user with filo");
