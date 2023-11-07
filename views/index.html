@@ -7,32 +7,30 @@
   <title>Filo white-labelled SDK example</title>
   <script
     async=""
-    src="https://storage.googleapis.com/filo-website-asset/filo-sdk-plugin-script.min.js"
+    src="https://storage.googleapis.com/filo-website-asset/sdk-plugin-script.v1.min.js"
   ></script>
   <script>
-    function onButtonClick() {
-      let uid = document.getElementById("uid").value;
-      let question = document.getElementById("question")?.value;
+    const partnerId = "test-partner"; // your filo partner id
+    const url = "https://test-partner.staging.student.askfilo.com"; // your filo app url.
 
-      if ((uid || "") === "") {
-        alert("User id is not provided. Please provide user ID");
-        return;
-      }
-
-      const partnerId = "test-partner"; // your filo partner id
-      const url = "https://test-partner.student.askfilo.com"; // your filo app url.
-
+    window.addEventListener("load", (event) => {
       const savedToken = sessionStorage.getItem("filo-token") || "";
       const savedTokenTTL = parseInt(sessionStorage.getItem("expiry") || "0");
       const savedUid = sessionStorage.getItem("user-id");
 
-      if (
-        uid === savedUid &&
-        savedToken !== "" &&
-        savedTokenTTL > Date.now() / 1000
-      ) {
-        console.log("Saved token already valid. Using it.");
-        window.openFiloSdk(partnerId, savedToken, url, question || "");
+      if (savedUid && savedToken !== "" && savedTokenTTL > Date.now() / 1000) {
+        document.getElementById("saved-user-details").style.display = 'block';
+        document.getElementById("saved-uid").innerText = savedUid;
+      } else {
+        document.getElementById("saved-user-details").style.display = 'none';
+      }
+    });
+
+    function onButtonClick() {
+      let uid = document.getElementById("uid").value;
+
+      if ((uid || "") === "") {
+        alert("User id is not provided. Please provide user ID");
         return;
       }
 
@@ -50,7 +48,9 @@
           sessionStorage.setItem("filo-token", token);
           sessionStorage.setItem("expiry", expiry);
           sessionStorage.setItem("user-id", uid);
-          window.openFiloSdk(partnerId, token, url, question || "");
+
+          document.getElementById("ask-question-bt").style.display = 'block';
+          // window.openFiloSdk(partnerId, token, url, question || "");
         },
         (err) => {
           console.error("Unable to get filo token for user:", err);
@@ -58,15 +58,42 @@
         }
       );
     }
+
+    function openFilo() {
+      const savedToken = sessionStorage.getItem("filo-token") || "";
+      const savedTokenTTL = parseInt(sessionStorage.getItem("expiry") || "0");
+      const savedUid = sessionStorage.getItem("user-id");
+      let question = document.getElementById("question")?.value;
+
+      if (savedUid && savedToken !== "" && savedTokenTTL > Date.now() / 1000) {
+        window.openFiloSdkTab(partnerId, savedToken, url, question || "");
+      }
+    }
   </script>
 </head>
 <body>
   <div>
-    <label for="question">Question</label
-    ><input id="question" type="text" /><br /><br /><label for="uid"
-      >User Id</label
-    ><input id="uid" type="text" /><br /><br />
-    <button onclick="onButtonClick()">Ask question</button>
+    <h1>Demo white-labelled Filo APP</h1>
+
+    <label for="question">Question</label>
+    <input id="question" type="text" /><br /><br />
+
+    <div id="saved-user-details">
+      <h3>Saved user details</h3>
+      UID: <span id="saved-uid"></span><br/>
+      <button onclick="openFilo()">Ask question</button>
+      <br/><br/>
+    </div>
+
+    <hr/>
+
+    <h3>Open enter user details below</h3>
+
+    <label for="uid">User Id</label>
+    <input id="uid" type="text" /><br /><br />
+
+    <button onclick="onButtonClick()">Generate token</button> <br/>
+    <button id="ask-question-bt" onclick="openFilo()" style="display: none;">Ask question</button>
     <br /><br />
     <div id="error"></div>
     <br /><br /><br />

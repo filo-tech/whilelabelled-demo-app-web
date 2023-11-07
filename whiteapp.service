@@ -1,0 +1,11 @@
+[Unit]
+Description=Filo whitelabelled demo app
+
+[Service]
+Type=simple
+Environment=NODE_ENV=development
+WorkingDirectory=/home/shadmananwer/dev/whilelabelled-demo-app-web
+ExecStart=/usr/bin/yarn start
+
+[Install]
+WantedBy=multi-user.target
