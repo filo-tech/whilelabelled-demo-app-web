@@ -4,6 +4,7 @@ const router = express.Router();
 
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
+const users = require("./s2s/users");
 
 // TODO - Ensure this request is authenticated to avoid misuse of API
 router.get("/filo/token", async function (req, res, next) {
@@ -27,10 +28,11 @@ router.get("/filo/token", async function (req, res, next) {
   // ========================================
   // Optionally configure user data with filo
   try {
-    const filoUserData = await provisionUser(token, "Rohit Kumar", 10);
+    const filoUserData = await users.provisionUser(token, "Rohit Kumar", 10);
     console.log("Filo user data", { uid: filoUserData.userId });
     // todo - save this user id to your database
   } catch (e) {
+    console.error("unable to provision user: ", e)
     next(e);
     return;
   }
@@ -45,44 +47,5 @@ router.get("/filo/token", async function (req, res, next) {
     partnerId: process.env.FILO_PARTNER_ID,
   });
 });
-
-/**
- * @param {*} token
- * @param {string} name - required
- * @param {number} gradeId - required
- * @param {number|null} boardId - optional
- * @param {string|null} gender - male/female - optional
- * @param {string|null} country - optional
- */
-const provisionUser = async (
-  token,
-  name,
-  gradeId,
-  boardId = null,
-  gender = null,
-  country = null
-) => {
-  const profileUpdateUrl = `${process.env.FILO_HOST}/vendor/${process.env.FILO_PARTNER_ID}/users`;
-  const userResp = await fetch(profileUpdateUrl, {
-    method: "POST",
-    body: JSON.stringify({
-      token,
-      name,
-      gradeId,
-      boardId,
-      gender,
-      country,
-    }),
-    headers: { "Content-Type": "application/json" },
-  });
-  if (userResp.status !== 200) {
-    console.error("unable to provision user with filo", {
-      status: userResp.status,
-    });
-    throw new Error("unable to provision user with filo");
-  }
-
-  return await userResp.json();
-};
 
 module.exports = router;
