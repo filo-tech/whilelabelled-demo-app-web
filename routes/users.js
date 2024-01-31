@@ -10,6 +10,7 @@ const users = require("./s2s/users");
 router.get("/filo/token", async function (req, res, next) {
   // Fetch user identifier from headers/cookies/or body
   const userId = req.header("user-id");
+  const scope = req.header("scope");
 
   // ===============================================
   // Create user token to authorise user with filo
@@ -20,7 +21,7 @@ router.get("/filo/token", async function (req, res, next) {
     exp: expiry,
     aud: "student.askfilo.com",
     sub: userId,
-    scope: process.env.FILO_PARTNER_ID,
+    scope: scope || process.env.FILO_PARTNER_ID,
   };
   const token = jwt.sign(filoAuthPayload, process.env.FILO_TOKEN);
   // ----------- end user token generation ----------
@@ -32,7 +33,7 @@ router.get("/filo/token", async function (req, res, next) {
     console.log("Filo user data", { uid: filoUserData.userId });
     // todo - save this user id to your database
   } catch (e) {
-    console.error("unable to provision user: ", e)
+    console.error("unable to provision user: ", e);
     next(e);
     return;
   }
